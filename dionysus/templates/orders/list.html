@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">{% translate "Orders List" %}</h2>
+
+    <!-- Search Bar -->
+    <form method="GET" action="" class="mb-4">
+        <div class="input-group">
+            <input type="text" class="form-control" name="q" placeholder="{% translate 'Search objects...' %}" value="{{ request.GET.q }}">
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="submit">{% translate "Search" %}</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Object List -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            {% if orders_list %}
+                <div class="group-header">
+                    {% translate "Orders." %}
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for order in orders_list %}
+                        {% include "includes/order_card.html" with order=order %}
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="alert alert-warning text-center">{% translate "No orders found." %}</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

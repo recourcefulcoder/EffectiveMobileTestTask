@@ -1,4 +1,5 @@
 venv
 pyvenv.cfg
 .idea
+personal
 */db.sqlite3

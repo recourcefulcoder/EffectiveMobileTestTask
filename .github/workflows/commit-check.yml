@@ -19,7 +19,7 @@ jobs:
       - name: Run server
         run: |
           pip install -r requirements/dev.txt
-          cd project_folder
+          cd dionysus
           timeout 5s python3 manage.py runserver || true
 
   linting:
@@ -34,5 +34,5 @@ jobs:
       - name: check_PEP8
         shell: bash
         run: |
-         pip install flake8==7.1.1
-         flake8 --exclude .git,.github,migrations,venv .
+         pip install -r requirements/linting.txt
+         flake8 .
