@@ -1,0 +1,38 @@
+name: CD
+
+on:
+  [workflow_dispatch, push]
+
+jobs:
+  testing:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+    env:
+      DEBUG: False
+      SECRET_KEY: test_secret_key
+      LANGUAGE_CODE: ru
+    steps:
+      - name: add_checkout
+        uses: actions/checkout@v4
+      - name: Run server
+        run: |
+          pip install -r requirements/dev.txt
+          cd project_folder
+          timeout 5s python3 manage.py runserver || true
+
+  linting:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ "3.12" ]
+    steps:
+      - name: add_checkout
+        uses: actions/checkout@v4
+
+      - name: check_PEP8
+        shell: bash
+        run: |
+         pip install flake8==7.1.1
+         flake8 --exclude .git,.github,migrations,venv .

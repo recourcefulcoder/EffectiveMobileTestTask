@@ -1,0 +1,4 @@
+venv
+pyvenv.cfg
+.idea
+*/db.sqlite3
