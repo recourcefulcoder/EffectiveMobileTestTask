@@ -10,8 +10,15 @@ python -m venv venv
 source venv/bin/activate
 pip install requirements/dev.txt
 ```
+2. Создайте файл .env в главной папке и установите 
+по вашему усмотрению значения перемменных LANGUAGE_CODE, DEBUG и SECRET_KEY:
 
-2. Перейдите в папку проекта и создайте базу данных; установите фикстуры 
+```bash
+touch .env
+```
+Пример см. в файле .env.example
+
+3. Перейдите в папку проекта и создайте базу данных; установите фикстуры 
 
 ```bash
 cd dionysus

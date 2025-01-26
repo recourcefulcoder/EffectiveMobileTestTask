@@ -5,14 +5,14 @@
         <strong>#{{ order.pk }}</strong> |
         <span>{% translate "Table" %}: {{ order.table_number }}</span> | 
         <span class="badge {% if order.status == 'done' %}badge-success{% else %}badge-warning{% endif %} text-dark">
-            {{ order.status }}
+            {{ order.get_status_display }}
         </span> | 
         <span>{% translate "Total" %}: ${{ order.total_price }}</span>
     </div>
 
     <div class="btn-group">
         <!-- Additional Info Button -->
-        <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#orderInfoModal{{ order.pk }}">
+        <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-target="#orderInfoModal{{ order.pk }}">
             <i class="fas fa-info-circle"></i>
         </button>
 
@@ -22,7 +22,7 @@
         </a>
 
         <!-- Delete Button -->
-        <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteOrderModal{{ order.id }}">
+        <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-target="#deleteOrderModal{{ order.id }}">
             <i class="fas fa-trash"></i>
         </button>
     </div>
@@ -34,14 +34,14 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
         <p><strong>{% translate "Order ID" %}:</strong> {{ order.id }}</p>
         <p><strong>{% translate "Table Number" %}:</strong> {{ order.table_number }}</p>
-        <p><strong>{% translate "Status" %}:</strong> {{ order.status }}</p>
+        <p><strong>{% translate "Status" %}:</strong> {{ order.get_status_display }}</p>
         <p><strong>{% translate "Total Cost" %}:</strong> ${{ order.total_cost }}</p>
       </div>
       <div class="modal-footer">
@@ -58,7 +58,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="deleteOrderModalLabel{{ order.id }}">{% translate "Confirm Deletion" %}</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -72,3 +72,14 @@
     </div>
   </div>
 </div>
+
+<!--<script>-->
+<!--    $(function(){-->
+<!--    $('#orderInfoModal{{ order.pk }}').modal({-->
+<!--       show:true,-->
+<!--       backdrop:'static'-->
+<!--    });-->
+<!--     //now on button click-->
+<!--      $('#orderInfoModal{{ order.pk }}').modal('show');-->
+<!--    });-->
+<!--</script>-->

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block content %}
+    {% if income != 0 %}
+        <h1>{% translate "Total income based on database data is" %}: {{income}}</h1>
+    {% else %}
+        <h1>{% translate "There are no paid orders yet!" %}</h1>
+    {% endif %}
+{% endblock %}

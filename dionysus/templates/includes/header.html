@@ -1,7 +1,7 @@
 {% load i18n %}
 
 <nav class="navbar navbar-expand-lg navbar-light bg-primary">
-  <a class="navbar-brand text-white" href="#">Dionysus</a>
+  <a class="navbar-brand text-white p-3" href="#">Dionysus</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -9,13 +9,16 @@
     <ul class="navbar-nav justify-content-between">
       {% url 'orders:list' as order_list %}
       {% url 'orders:add' as add_order %}
+      {% url 'orders:income_total' as income_url %}
       <li class="nav-item {% if request.path == order_list %}active{% endif %}">
         <a class="nav-link" href="{{order_list}}">{% translate "All orders" %} <span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item {% if request.path == add_order %}active{% endif %}">
         <a class="nav-link" href="{{add_order}}">{% translate "Add order" %}</a>
       </li>
-
+      <li class="nav-item {% if request.path == income_url %}active{% endif %}">
+        <a class="nav-link" href="{{income_url}}">{% translate "See income" %}</a>
+      </li>
 
       <ul class="navbar-nav ms-auto">
       <li class="nav-item dropdown">

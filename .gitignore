@@ -3,3 +3,4 @@ pyvenv.cfg
 .idea
 personal
 */db.sqlite3
+.env

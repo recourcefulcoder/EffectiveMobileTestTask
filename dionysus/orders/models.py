@@ -3,9 +3,9 @@ from django.utils.translation import gettext as _
 
 
 STATUS_CHOICES = [
-    ('wait', _('order pending')),
-    ('done', _('order ready')),
-    ('paid', _('order paid')),
+    ("wait", _("order pending")),
+    ("done", _("order ready")),
+    ("paid", _("order paid")),
 ]
 
 
@@ -13,7 +13,9 @@ class Order(models.Model):
     table_number = models.SmallIntegerField()
     items = models.JSONField()
     total_price = models.IntegerField(blank=True, null=True)
-    status = models.CharField(choices=STATUS_CHOICES, max_length=4)
+    status = models.CharField(
+        choices=STATUS_CHOICES, max_length=4, default="wait"
+    )
 
     def save(self, **kwargs):
         self.total_price = 0
