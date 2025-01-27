@@ -11,8 +11,8 @@
     </div>
 
     <div class="btn-group">
-        <!-- Additional Info Button -->
-        <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-target="#orderInfoModal{{ order.pk }}">
+        <!-- Info Button -->
+        <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#orderInfoModal{{ order.pk }}">
             <i class="fas fa-info-circle"></i>
         </button>
 
@@ -22,64 +22,62 @@
         </a>
 
         <!-- Delete Button -->
-        <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-target="#deleteOrderModal{{ order.id }}">
+        <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteOrderModal{{ order.pk }}">
             <i class="fas fa-trash"></i>
         </button>
     </div>
 </div>
 
-<!-- Additional Info Modal -->
-<div class="modal fade" id="orderInfoModal{{ order.pk }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+<!-- Order Info Modal -->
+<div class="modal fade" id="orderInfoModal{{ order.pk }}" tabindex="-1" aria-labelledby="orderInfoModalLabel{{ order.pk }}" aria-hidden="true">
+  <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <h5 class="modal-title">{% translate "Order Details" %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <p><strong>{% translate "Order ID" %}:</strong> {{ order.id }}</p>
         <p><strong>{% translate "Table Number" %}:</strong> {{ order.table_number }}</p>
         <p><strong>{% translate "Status" %}:</strong> {{ order.get_status_display }}</p>
-        <p><strong>{% translate "Total Cost" %}:</strong> ${{ order.total_cost }}</p>
+        <p><strong>{% translate "Total Cost" %}:</strong> ${{ order.total_price }}</p>
+
+
+        <!-- Render Order Items -->
+        <h5 class="mt-3">{% translate "Ordered Items" %}</h5>
+        <ul class="list-group">
+          {% for item_name, item_price in order.items.items %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              {{ item_name }}
+              <span class="badge bg-primary rounded-pill">${{ item_price }}</span>
+            </li>
+          {% empty %}
+            <li class="list-group-item text-muted">{% translate "No items in this order." %}</li>
+          {% endfor %}
+        </ul>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% translate "Close" %}</button>
       </div>
     </div>
   </div>
 </div>
 
-
-<div class="modal fade" id="deleteOrderModal{{ order.pk }}" tabindex="-1" role="dialog" aria-labelledby="deleteOrderModalLabel{{ order.id }}" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteOrderModal{{ order.pk }}" tabindex="-1" aria-labelledby="deleteOrderModalLabel{{ order.pk }}" aria-hidden="true">
+  <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="deleteOrderModalLabel{{ order.id }}">{% translate "Confirm Deletion" %}</h5>
-        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <h5 class="modal-title">{% translate "Confirm Deletion" %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <p>{% translate "Are you sure you want to delete this order?" %}</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">{% translate "Cancel" %}</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% translate "Cancel" %}</button>
         <a href="{% url 'orders:delete' order.id %}" class="btn btn-danger">{% translate "Confirm" %}</a>
       </div>
     </div>
   </div>
 </div>
-
-<!--<script>-->
-<!--    $(function(){-->
-<!--    $('#orderInfoModal{{ order.pk }}').modal({-->
-<!--       show:true,-->
-<!--       backdrop:'static'-->
-<!--    });-->
-<!--     //now on button click-->
-<!--      $('#orderInfoModal{{ order.pk }}').modal('show');-->
-<!--    });-->
-<!--</script>-->
