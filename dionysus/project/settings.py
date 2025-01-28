@@ -30,6 +30,7 @@ if not DEBUG:
 
 INSTALLED_APPS = [
     "orders.apps.OrdersConfig",
+    "api.apps.ApiConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",

@@ -14,7 +14,7 @@ def validate_items(field_value):
     if not field_value:
         raise ValidationError(_("Each order must contain at least one item"))
     for key, value in field_value.items():
-        if int(field_value[key]) <= 0:
+        if int(value) <= 0:
             raise ValidationError(
                 _("%(key)s has non-positive price value"), params={"key": key}
             )
@@ -27,6 +27,12 @@ class Order(models.Model):
     status = models.CharField(
         choices=STATUS_CHOICES, max_length=4, default="wait"
     )
+
+    def validate_unique(self, exclude=None):
+        if exclude is None:
+            exclude = set()
+        exclude.add("id")
+        super().validate_unique(exclude=exclude)
 
     def save(self, **kwargs):
         self.total_price = 0

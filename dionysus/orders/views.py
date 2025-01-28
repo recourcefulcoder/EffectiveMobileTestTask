@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db.models import Sum
 from django.forms import formset_factory
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
 from django.utils.translation import gettext as _
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
@@ -14,11 +14,7 @@ from .forms import (
     dict_from_item_form_data,
     item_form_data_creation,
 )
-from .models import Order
-
-
-def do_nothing(request, **kwargs):
-    return render(request, "default.html")
+from .models import Order, STATUS_CHOICES
 
 
 def delete_order(request, pk):
@@ -36,9 +32,28 @@ class OrderList(ListView):
     template_name = "orders/list.html"
     model = Order
     context_object_name = "orders_list"
+    allow_empty = True
 
     def get_queryset(self):
-        return Order.objects.all().order_by("status")
+        params = self.request.GET.dict()
+        if not params or not params["q"]:
+            return Order.objects.all().order_by("-id")
+        query = params["q"]
+
+        if query.isdigit():
+            try:
+                return Order.objects.filter(pk=int(query))
+            except Order.DoesNotExist:
+                return None
+
+        db_query = []
+        for db, verbose in STATUS_CHOICES:
+            if query in verbose:
+                db_query.append(db)
+        return Order.objects.filter(status__in=db_query).order_by("-id")
+
+    def post(self, request, *args, **kwargs):
+        return redirect("orders:list")
 
 
 class IncomeView(TemplateView):
@@ -72,8 +87,8 @@ class OrderFormProcessMixin:
         return formset
 
     def process_post(self, request, success_message, force_update=False):
+        process_success = True
         data = request.POST
-        # print('processing_data', type(data), data)
 
         items = dict_from_item_form_data(data)
 
@@ -94,11 +109,18 @@ class OrderFormProcessMixin:
             if force_update:
                 order_data["pk"] = int(request.resolver_match.kwargs.get("pk"))
 
-            # print(order_data)
-            Order(**order_data).save(force_update=force_update)
+            order = Order(**order_data)
+            order.full_clean()
+            order.save(force_update=force_update)
             messages.success(request, success_message)
         except ValidationError as e:
-            messages.error(request, e)
+            process_success = False
+            if hasattr(e, "message_dict"):
+                for error in e.message_dict:
+                    messages.error(request, e.message_dict[error][0])
+            else:
+                messages.error(request, e)
+        return process_success
 
 
 class OrderProcessView(OrderFormProcessMixin, FormView):
@@ -119,13 +141,12 @@ class AddOrder(OrderProcessView):
         return super().get_context_data(submit_message=_("Add order"))
 
     def post(self, request, *args, **kwargs):
-        try:
-            self.process_post(request, _("New order successfully added!"))
-        except ValidationError:
-            return redirect(
-                "orders:add", request.resolver_match.kwargs.get("pk")
-            )
-        return self.get(request)
+        success = self.process_post(
+            request, _("New order successfully added!")
+        )
+        if success:
+            return self.get(request)
+        return redirect("orders:add")
 
 
 class EditOrder(OrderProcessView):
@@ -140,15 +161,12 @@ class EditOrder(OrderProcessView):
         return context
 
     def post(self, request, *args, **kwargs):
-        try:
-            self.process_post(
-                request, _("Order successfully updated"), force_update=True
-            )
-        except ValidationError:
-            return redirect(
-                "orders:edit", request.resolver_match.kwargs.get("pk")
-            )
-        return redirect("orders:list")
+        success = self.process_post(
+            request, _("Order successfully updated"), force_update=True
+        )
+        if success:
+            return redirect("orders:list")
+        return redirect("orders:edit", request.resolver_match.kwargs.get("pk"))
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)

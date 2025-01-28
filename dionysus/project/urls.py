@@ -7,4 +7,5 @@ urlpatterns = [
     path("", view=views.redirect_to_orders_main_page, name="homepage"),
     path("admin/", admin.site.urls),
     path("orders/", include("orders.urls")),
+    path("api/", include("api.urls")),
 ]
