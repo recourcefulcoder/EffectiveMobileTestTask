@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-27 14:27+0100\n"
+"POT-Creation-Date: 2025-01-28 13:35+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -43,41 +43,41 @@ msgstr "В каждом заказе должно содержаться хот�
 #: orders/models.py:19
 #, python-format
 msgid "%(key)s has non-positive price value"
-msgstr "У %(key)s не положительное значение цены"
+msgstr "Цена %(key)s <= 0"
 
-#: orders/views.py:29
+#: orders/views.py:25
 msgid "Order with provided ID not found"
 msgstr "Заказ с указанным ID не найден"
 
-#: orders/views.py:31
+#: orders/views.py:27
 msgid "Order successfully deleted!"
 msgstr "Заказ успешно удалён!"
 
-#: orders/views.py:62 orders/views.py:69
+#: orders/views.py:77 orders/views.py:84
 msgid "Add at least one item for order"
 msgstr "Добавьте как минимум одно блюдо в заказ"
 
-#: orders/views.py:83
+#: orders/views.py:98
 msgid "Invalid items data - maybe you forgot to add any?"
 msgstr "Ошибка при обработке блюд - может, вы забыли добавить блюдо?"
 
-#: orders/views.py:85
+#: orders/views.py:100
 msgid "Formset invalid"
 msgstr "Ошибка formset'a"
 
-#: orders/views.py:119 templates/includes/header.html:17
+#: orders/views.py:141 templates/includes/header.html:17
 msgid "Add order"
 msgstr "Добавить заказ"
 
-#: orders/views.py:123
+#: orders/views.py:145
 msgid "New order successfully added!"
 msgstr "Новый заказ успешно добавлен!"
 
-#: orders/views.py:136
+#: orders/views.py:157
 msgid "Change order"
 msgstr "Изменить заказ"
 
-#: orders/views.py:145
+#: orders/views.py:165
 msgid "Order successfully updated"
 msgstr "Заказ успешно изменён"
 
@@ -89,18 +89,6 @@ msgstr "Все заказы"
 msgid "See income"
 msgstr "Посмотреть выручку"
 
-#: templates/includes/header.html:26
-msgid "Other options"
-msgstr "Остальные опции"
-
-#: templates/includes/header.html:29
-msgid "Action"
-msgstr ""
-
-#: templates/includes/header.html:30
-msgid "Another action"
-msgstr ""
-
 #: templates/includes/order_card.html:6
 msgid "Table"
 msgstr "Стол №"
@@ -109,8 +97,7 @@ msgstr "Стол №"
 msgid "Total"
 msgstr "Всего"
 
-#: templates/includes/order_card.html:36 templates/orders/add.html:11
-#: templates/orders/order_detail.html:11
+#: templates/includes/order_card.html:36 templates/orders/order_detail.html:11
 msgid "Order Details"
 msgstr "Детали заказа"
 
@@ -158,22 +145,6 @@ msgstr "Отмена"
 msgid "Confirm"
 msgstr "Подтвердить"
 
-#: templates/orders/add.html:25 templates/orders/order_detail.html:25
-msgid "Order Items"
-msgstr "Блюда заказа"
-
-#: templates/orders/add.html:37 templates/orders/order_detail.html:37
-msgid "Remove"
-msgstr "Удалить"
-
-#: templates/orders/add.html:43 templates/orders/order_detail.html:43
-msgid "Add Item"
-msgstr "Добавить блюдо"
-
-#: templates/orders/add.html:44
-msgid "Submit Order"
-msgstr "Создать заказ"
-
 #: templates/orders/income.html:7
 msgid "Total income based on database data is"
 msgstr "Общая выручка составляет"
@@ -201,3 +172,27 @@ msgstr "Заказы."
 #: templates/orders/list.html:32
 msgid "No orders found."
 msgstr "Заказы не найдены."
+
+#: templates/orders/order_detail.html:25
+msgid "Order Items"
+msgstr "Блюда заказа"
+
+#: templates/orders/order_detail.html:37
+msgid "Remove"
+msgstr "Удалить"
+
+#: templates/orders/order_detail.html:43
+msgid "Add Item"
+msgstr "Добавить блюдо"
+
+#: utils/forms.py:8
+#, fuzzy
+#| msgid "Search objects..."
+msgid "Search orders..."
+msgstr "Искать заказы..."
+
+#~ msgid "Other options"
+#~ msgstr "Остальные опции"
+
+#~ msgid "Submit Order"
+#~ msgstr "Создать заказ"
