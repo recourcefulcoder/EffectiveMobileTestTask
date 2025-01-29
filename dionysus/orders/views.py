@@ -1,3 +1,5 @@
+from typing import Dict, Optional, Union
+
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db.models import Sum
@@ -8,6 +10,8 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from django.views.generic.list import ListView
 
+from utils.functions import normalize
+
 from .forms import (
     ItemForm,
     OrderCreationForm,
@@ -16,11 +20,12 @@ from .forms import (
 )
 from .models import Order, STATUS_CHOICES
 
+ORDER_LIST_CONTEXT_NAME = "orders_list"
+
 
 def delete_order(request, pk):
     try:
-        order = Order.objects.get(pk=pk)
-        order.delete()
+        Order.objects.filter(pk=pk).delete()
     except Order.DoesNotExist:
         messages.error(request, _("Order with provided ID not found"))
         return redirect("orders:list")
@@ -31,14 +36,15 @@ def delete_order(request, pk):
 class OrderList(ListView):
     template_name = "orders/list.html"
     model = Order
-    context_object_name = "orders_list"
+    context_object_name = ORDER_LIST_CONTEXT_NAME
     allow_empty = True
 
     def get_queryset(self):
         params = self.request.GET.dict()
         if not params or not params["q"]:
-            return Order.objects.all().order_by("-id")
-        query = params["q"]
+            return Order.objects.all()
+        query = normalize(params["q"])
+        # print(f"QUERY: |{query}|")
 
         if query.isdigit():
             try:
@@ -50,10 +56,8 @@ class OrderList(ListView):
         for db, verbose in STATUS_CHOICES:
             if query in verbose:
                 db_query.append(db)
-        return Order.objects.filter(status__in=db_query).order_by("-id")
 
-    def post(self, request, *args, **kwargs):
-        return redirect("orders:list")
+        return Order.objects.filter(status__in=db_query)
 
 
 class IncomeView(TemplateView):
@@ -70,7 +74,9 @@ class IncomeView(TemplateView):
 
 
 class OrderFormProcessMixin:
-    def get_items_formset(self, items=None):
+    def get_items_formset(
+        self, items: Optional[Dict[str, Union[int, str]]] = None
+    ):
         if items is None:
             return formset_factory(ItemForm, min_num=1, validate_min=True)(
                 error_messages={
@@ -86,9 +92,17 @@ class OrderFormProcessMixin:
         )
         return formset
 
-    def process_post(self, request, success_message, force_update=False):
-        process_success = True
+    def process_post(
+        self, request, success_message: str, force_update: bool = False
+    ) -> bool:
+        process_success: bool = True
         data = request.POST
+
+        formset = formset_factory(ItemForm)(data)
+        for form in formset:
+            if not form.is_valid():
+                messages.error(request, "Empty order item passed")
+                return False
 
         items = dict_from_item_form_data(data)
 
@@ -110,7 +124,7 @@ class OrderFormProcessMixin:
                 order_data["pk"] = int(request.resolver_match.kwargs.get("pk"))
 
             order = Order(**order_data)
-            order.full_clean()
+            order.full_clean(exclude={"id"})
             order.save(force_update=force_update)
             messages.success(request, success_message)
         except ValidationError as e:
@@ -128,7 +142,12 @@ class OrderProcessView(OrderFormProcessMixin, FormView):
     form_class = OrderCreationForm
     template_name = "orders/order_detail.html"
 
-    def get_context_data(self, submit_message=None, items=None, **kwargs):
+    def get_context_data(
+        self,
+        submit_message: Optional[str] = None,
+        items: Optional[Dict[str, Union[str, int]]] = None,
+        **kwargs,
+    ):
         context = super().get_context_data(**kwargs)
         context["formset"] = self.get_items_formset(items)
         if submit_message is not None:
@@ -137,11 +156,11 @@ class OrderProcessView(OrderFormProcessMixin, FormView):
 
 
 class AddOrder(OrderProcessView):
-    def get_context_data(self, submit_message=None, **kwargs):
+    def get_context_data(self, submit_message: Optional[str] = None, **kwargs):
         return super().get_context_data(submit_message=_("Add order"))
 
     def post(self, request, *args, **kwargs):
-        success = self.process_post(
+        success: bool = self.process_post(
             request, _("New order successfully added!")
         )
         if success:
@@ -161,7 +180,7 @@ class EditOrder(OrderProcessView):
         return context
 
     def post(self, request, *args, **kwargs):
-        success = self.process_post(
+        success: bool = self.process_post(
             request, _("Order successfully updated"), force_update=True
         )
         if success:

@@ -1,10 +1,12 @@
+from typing import Dict
+
 from django import forms
 from django.utils.translation import gettext as _
 
 from .models import Order
 
 
-def item_form_data_creation(items):
+def item_form_data_creation(items) -> Dict[str, int]:
     data = {
         "form-TOTAL_FORMS": len(items),
         "form-INITIAL_FORMS": len(items),
@@ -17,7 +19,7 @@ def item_form_data_creation(items):
     return data
 
 
-def dict_from_item_form_data(data):
+def dict_from_item_form_data(data) -> Dict[str, int]:
     items = dict()
     i = 0
     for cnt in range(int(data["form-TOTAL_FORMS"])):
@@ -39,7 +41,13 @@ class ItemForm(forms.Form):
         label=_("item name"),
         max_length=150,
         widget=forms.TextInput(attrs={"required": True}),
+        required=True,
     )
     price = forms.IntegerField(
-        widget=forms.NumberInput(attrs={"required": True})
+        widget=forms.NumberInput(attrs={"required": True}),
+        required=True,
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.empty_permitted = False
