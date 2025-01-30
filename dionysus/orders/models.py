@@ -1,12 +1,14 @@
+from typing import Final
+
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext as _
 
-STATUS_WAIT = "wait"
-STATUS_DONE = "done"
-STATUS_PAID = "paid"
+STATUS_WAIT: Final = "wait"
+STATUS_DONE: Final = "done"
+STATUS_PAID: Final = "paid"
 
-STATUS_CHOICES = [
+STATUS_CHOICES: Final = [
     (STATUS_WAIT, _("order pending")),
     (STATUS_DONE, _("order ready")),
     (STATUS_PAID, _("order paid")),

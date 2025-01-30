@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Union
+from typing import Dict, Final, Optional, Union
 
 from django.contrib import messages
 from django.core.exceptions import ValidationError
@@ -20,7 +20,7 @@ from .forms import (
 )
 from .models import Order, STATUS_CHOICES
 
-ORDER_LIST_CONTEXT_NAME = "orders_list"
+ORDER_LIST_CONTEXT_NAME: Final = "orders_list"
 
 
 def delete_order(request, pk):

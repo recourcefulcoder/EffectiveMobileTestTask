@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Union
 
 from django import forms
 from django.utils.translation import gettext as _
@@ -6,7 +6,7 @@ from django.utils.translation import gettext as _
 from .models import Order
 
 
-def item_form_data_creation(items) -> Dict[str, int]:
+def item_form_data_creation(items: Dict[str, int]) -> Dict[str, int]:
     data = {
         "form-TOTAL_FORMS": len(items),
         "form-INITIAL_FORMS": len(items),
@@ -19,7 +19,9 @@ def item_form_data_creation(items) -> Dict[str, int]:
     return data
 
 
-def dict_from_item_form_data(data) -> Dict[str, int]:
+def dict_from_item_form_data(
+    data: Dict[str, Union[str, int]]
+) -> Dict[str, int]:
     items = dict()
     i = 0
     for cnt in range(int(data["form-TOTAL_FORMS"])):
